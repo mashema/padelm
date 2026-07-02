@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="fo" class="scroll-smooth">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kunning — Padelmiðstøðin</title>
+<meta name="description" content="Praktisk kunning um Padelmiðstøðina í Hoyvík — bóking, útgerð og reglur.">
+<meta name="theme-color" content="#0f1e35">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          /* Core brand palette — see prototype/DESIGN.md for full usage rules */
+          'pm-blue':  '#9ec2e8', /* primary accent: blue CTAs, halftone dots, plan outlines */
+          'pm-steel': '#31537c', /* highlighted HER, icons, court badges, dividers */
+          'pm-ink':   '#131111', /* headings + body on light */
+          'pm-navy':  '#0f1e35', /* footer / dark section base */
+          'pm-panel': '#e9f1fb', /* light-blue full-width bands */
+          /* Supporting text tints */
+          'pm-slate': '#35435c', /* muted body text on light */
+          'pm-ice':   '#dde6f2', /* body text on dark photos */
+          'pm-frost': '#c9d4e4', /* body text on navy (footer) */
+          'pm-fog':   '#8ea3bf', /* fine print on navy */
+          /* Brand palette, currently unused in the page */
+          'pm-cyan':  '#14add7',
+          'pm-deep':  '#223674',
+          'pm-water': '#1d3056',
+        },
+        fontFamily: {
+          sans: ['"Lucida Grande"', '"Lucida Sans Unicode"', '"Lucida Sans"', '"Segoe UI"', 'Tahoma', 'sans-serif'],
+        },
+      },
+    },
+  };
+</script>
+<style>
+  /* Halftone dot fields — decorative brand element, masked so they fade out */
+  .dots-blue    { background-image: radial-gradient(circle, rgba(158,194,232,0.7) 2px, transparent 2.5px); background-size: 22px 22px; }
+  .dots-blue-lg { background-image: radial-gradient(circle, rgba(158,194,232,0.65) 2.4px, transparent 3px); background-size: 26px 26px; }
+  .fade-down-right { -webkit-mask-image: linear-gradient(125deg, #000 20%, transparent 72%); mask-image: linear-gradient(125deg, #000 20%, transparent 72%); }
+  .fade-down-left  { -webkit-mask-image: linear-gradient(225deg, #000 20%, transparent 72%); mask-image: linear-gradient(225deg, #000 20%, transparent 72%); }
+  .fade-hero       { -webkit-mask-image: linear-gradient(215deg, #000 18%, transparent 70%); mask-image: linear-gradient(215deg, #000 18%, transparent 70%); }
+  .fade-up-left    { -webkit-mask-image: linear-gradient(305deg, #000 20%, transparent 72%); mask-image: linear-gradient(305deg, #000 20%, transparent 72%); }
+
+  /* Shared CTA interaction — same easing as the feature cards: gentle lift + soft shadow.
+     The button keeps its shape; press settles it back down. */
+  .pm-cta {
+    will-change: transform;
+    transition: transform .3s cubic-bezier(.2,.75,.2,1), box-shadow .3s cubic-bezier(.2,.75,.2,1);
+  }
+  .pm-cta:hover { transform: translateY(-2px); box-shadow: 0 12px 26px rgba(13,24,46,0.2); }
+  .pm-cta:active { transform: translateY(0); box-shadow: 0 4px 10px rgba(13,24,46,0.16); transition-duration: .1s; }
+  /* White buttons on dark photo sections: a large dark shadow reads as a smudge there — lift only */
+  .pm-cta-on-dark:hover, .pm-cta-on-dark:active { box-shadow: none; }
+
+  /* Hero entrance — text slides down softly, staggered */
+  @keyframes pm-hero-in {
+    from { opacity: 0; transform: translateY(-16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .pm-hero-in { animation: pm-hero-in .8s cubic-bezier(.2,.75,.2,1) both; }
+
+  /* Scroll reveals — content rises in once when it enters the viewport.
+     Stagger siblings with style="--reveal-delay: .08s". Entrances only, no exits. */
+  .pm-reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity .6s cubic-bezier(.2,.75,.2,1) var(--reveal-delay, 0s),
+                transform .6s cubic-bezier(.2,.75,.2,1) var(--reveal-delay, 0s);
+  }
+  .pm-reveal.pm-revealed { opacity: 1; transform: none; }
+
+  /* Mobile menu drops in when opened (display toggle restarts the animation) */
+  @keyframes pm-menu-in {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  #mobile-menu:not(.hidden) { animation: pm-menu-in .25s cubic-bezier(.2,.75,.2,1); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pm-hero-in { animation: none; }
+    .pm-cta { transition: none; }
+    .pm-reveal { opacity: 1; transform: none; transition: none; }
+    #mobile-menu:not(.hidden) { animation: none; }
+  }
+
+</style>
+</head>
+<body class="bg-white font-sans text-pm-ink antialiased overflow-x-hidden">
+
+<!-- Padelmiðstøðin logo (real brand SVG, inlined once, reused via <use>) -->
+<svg class="hidden" aria-hidden="true">
+  <defs>
+    <symbol id="pm-logo" viewBox="0 0 2956 1179" fill="none">
+      <path d="M605.552 154.05H672.027C699.385 154.05 712.418 165.783 712.418 205.525V279.167C712.418 318.917 700.035 331.292 672.669 331.292H637.077C637.96 280.083 631.585 230.25 616.035 183.483C612.985 174.308 609.435 165.308 605.469 156.475L605.552 154.05ZM677.243 401.033C767.168 401.033 794.535 367.133 794.535 279.167V207.492C794.535 116.9 767.168 84.975 677.243 84.975H557.91C537.369 63.2083 511.902 43.8 480.494 27.6L387.594 0C451.385 25.7417 494.06 68.1083 519.469 122.025C577.71 245.633 543.535 438.125 494.51 558.9C421.085 739.783 291.019 897.391 152.252 1039.58C118.819 1073.84 83.2687 1110.02 45.9688 1149.97L116.702 1170.97C217.96 1072.57 299.344 1002.28 361.377 933.458C425.935 861.841 496.369 766.241 548.377 660.475C589.235 577.383 619.502 488.308 631.485 401.033H677.243Z" fill="white"></path>
+      <path d="M907.291 395.813L914.449 316.972C919.666 261.572 924.891 204.872 929.441 156.655H945.074C949.649 204.23 954.866 260.922 959.416 315.655L967.241 395.813H907.291ZM1012.21 84.9717H866.232C855.149 181.413 823.216 442.088 808.891 547.646H892.949L900.757 464.238H973.757L981.582 547.646H1069.55C1055.21 442.088 1023.29 181.413 1012.21 84.9717Z" fill="white"></path>
+      <path d="M1199.25 156.008H1233.13C1260.52 156.008 1272.89 167.716 1272.89 207.483V424.491C1272.89 464.233 1260.52 476.616 1233.13 476.616H1199.25V156.008ZM1119.09 547.649H1233.13C1325.02 547.649 1354.99 518.324 1354.99 423.174V208.133C1354.99 114.3 1325.02 84.9746 1233.13 84.9746H1119.09C1119.74 109.083 1119.74 135.158 1119.74 168.383V452.508C1119.74 492.249 1119.74 520.283 1119.09 547.649Z" fill="white"></path>
+      <path d="M1414.98 547.648H1601.35V477.265C1570.08 477.932 1546.62 477.932 1513.38 477.932H1495.14V344.982H1511.43C1534.23 344.982 1555.09 344.982 1587.01 345.632V277.857H1495.14V154.699H1518.58C1543.36 154.699 1568.77 154.699 1595.48 155.34V84.9736H1414.98C1415.63 109.09 1415.63 135.157 1415.63 169.682V462.94C1415.63 497.473 1415.63 522.89 1414.98 547.648Z" fill="white"></path>
+      <path d="M1655.45 547.648H1830.1V474.673C1804.04 475.323 1788.39 475.323 1768.84 475.323H1735.61V169.682C1735.61 135.157 1735.61 110.382 1736.25 84.9736H1655.45C1656.1 109.732 1656.1 133.84 1656.1 167.724V451.857C1656.1 492.248 1656.1 518.973 1655.45 547.648Z" fill="white"></path>
+      <path d="M935.289 707.874H799.106L776.289 887.074C767.814 956.149 760.656 1033.7 754.789 1092.35H749.572C744.356 1033.7 737.189 956.149 728.722 886.432L705.906 707.874H562.539C563.189 735.882 563.189 757.391 563.189 791.282V1086.49C563.189 1120.37 563.189 1145.12 562.539 1170.55H640.089C639.439 1126.88 639.439 1077.37 639.439 1040.21C639.439 967.232 636.831 857.099 635.539 783.457H646.597C655.072 849.924 666.806 935.949 677.239 1010.88L700.706 1170.55H798.439L820.606 1012.2C831.022 936.591 842.106 850.591 850.581 783.457H859.706C858.389 864.266 855.797 986.124 855.797 1035.66C855.797 1079.31 855.797 1127.54 855.131 1170.55H935.289C934.639 1141.87 934.639 1119.72 934.639 1085.84V793.232C934.639 758.049 934.639 736.532 935.289 707.874Z" fill="white"></path>
+      <path d="M1084.55 707.874H1003.75C1004.39 732.632 1004.39 758.049 1004.39 792.582V1085.84C1004.39 1120.37 1004.39 1145.12 1003.75 1170.55H1084.55C1083.9 1144.47 1083.9 1120.37 1083.9 1086.49V793.232C1083.9 758.049 1083.9 732.632 1084.55 707.874Z" fill="white"></path>
+      <path d="M1307.45 1047.38C1307.45 1087.13 1295.07 1099.51 1267.68 1099.51H1233.81V957.441H1281.37V907.283H1233.81V778.9H1267.68C1295.07 778.9 1307.45 790.616 1307.45 830.374V1047.38ZM1267.68 707.866H1153.65C1154.3 731.975 1154.3 758.05 1154.3 791.283V907.283H1128.89L1129.54 957.441H1154.3V1075.4C1154.3 1115.14 1154.3 1143.17 1153.65 1170.54H1267.68C1359.57 1170.54 1389.55 1141.22 1389.55 1046.07V831.024C1389.55 737.191 1359.57 707.866 1267.68 707.866Z" fill="white"></path>
+      <path d="M1581.16 905.316C1527.08 874.024 1518.6 862.316 1518.6 823.866V813.424C1518.6 778.899 1527.08 767.166 1548.58 767.166C1570.73 767.166 1578.55 778.899 1578.55 813.424V852.524L1658.06 850.583V815.383C1658.06 730.666 1635.9 700.683 1549.23 700.683C1469.72 700.683 1437.8 731.333 1437.8 816.041V827.116C1437.8 903.358 1456.69 930.074 1523.15 967.224C1581.16 999.808 1588.32 1012.83 1588.32 1051.93V1063.67C1588.32 1098.86 1576.6 1109.94 1551.19 1109.94C1525.76 1109.94 1514.7 1098.86 1514.7 1063.67V1022.61L1435.19 1024.57V1062.37C1435.19 1149.69 1461.26 1177.7 1552.48 1177.7C1637.21 1177.7 1667.83 1149.69 1667.83 1062.37V1049.99C1667.83 972.441 1650.88 945.724 1581.16 905.316Z" fill="white"></path>
+      <path d="M1699.12 780.199H1775.37V1085.84C1775.37 1120.37 1775.37 1145.12 1774.73 1170.55H1855.53C1854.88 1144.47 1854.88 1120.37 1854.88 1086.48V780.199H1930.47V707.874H1699.12V780.199Z" fill="white"></path>
+      <path d="M2127.94 1053.9C2127.94 1094.29 2115.56 1106.69 2088.2 1106.69C2072.55 1106.69 2062.12 1102.12 2055.6 1091.7L2127.94 892.941V1053.9ZM2047.78 824.516C2047.78 784.749 2060.83 773.041 2088.2 773.041C2105.14 773.041 2116.87 777.591 2122.74 791.283L2047.78 995.891V824.516ZM2213.96 707.199L2176.18 705.908C2174.86 709.166 2172.9 712.416 2170.95 717.641C2151.4 705.266 2124.68 700.041 2088.2 700.041C1996.95 700.041 1966.33 730.666 1966.33 825.158V1053.25C1966.33 1089.74 1970.9 1116.46 1981.32 1136C1974.15 1149.04 1968.29 1160.77 1963.07 1169.89L1963.72 1171.19L2001.52 1172.51C2002.82 1169.25 2004.78 1165.97 2006.74 1162.07C2025.63 1173.8 2052.35 1178.37 2088.2 1178.37C2178.76 1178.37 2209.4 1147.73 2209.4 1053.25V825.158C2209.4 790.616 2205.49 765.208 2196.36 745.649C2203.55 731.333 2210.05 718.291 2214.6 708.516L2213.96 707.199Z" fill="white"></path>
+      <path d="M2425.11 1047.38C2425.11 1087.13 2412.73 1099.51 2385.37 1099.51H2351.49V957.441H2399.06V907.283H2351.49V778.9H2385.37C2412.73 778.9 2425.11 790.616 2425.11 830.374V1047.38ZM2385.37 707.866H2271.33C2271.98 731.975 2271.98 758.05 2271.98 791.283V907.283H2246.55L2247.22 957.441H2271.98V1075.4C2271.98 1115.14 2271.98 1143.17 2271.33 1170.54H2385.37C2477.25 1170.54 2507.23 1141.22 2507.23 1046.07V831.024C2507.23 737.191 2477.25 707.866 2385.37 707.866Z" fill="white"></path>
+      <path d="M2648 707.874H2567.2C2567.84 732.632 2567.84 758.049 2567.84 792.582V1085.84C2567.84 1120.37 2567.84 1145.12 2567.2 1170.55H2648C2647.35 1144.47 2647.35 1120.37 2647.35 1086.49V793.232C2647.35 758.049 2647.35 732.632 2648 707.874Z" fill="white"></path>
+      <path d="M2954.97 791.282C2954.97 757.391 2954.97 733.274 2955.62 707.874H2885.88V818.007C2885.88 879.249 2888.48 1008.94 2890.45 1083.87H2885.88C2877.4 1021.97 2866.33 938.549 2855.25 862.316L2831.79 707.874H2717.11C2717.76 733.274 2717.76 757.391 2717.76 791.932V1086.48C2717.76 1121.01 2717.76 1145.12 2717.11 1170.55H2787.48V1059.77C2787.48 987.441 2784.87 862.966 2782.93 786.066C2792.69 851.882 2806.38 946.374 2818.77 1031.08L2841.56 1170.55H2955.62C2955.62 1143.18 2954.97 1117.76 2954.97 1086.48V791.282Z" fill="white"></path>
+      <path d="M90.1894 543.415C86.9558 554.303 89.8862 564.779 96.7483 566.817C103.6 568.861 111.784 561.677 115.018 550.788C118.254 539.892 115.317 529.406 108.461 527.378C101.607 525.343 93.4174 532.516 90.1894 543.415Z" fill="white"></path>
+      <path d="M48.0175 530.89C44.7839 541.778 47.712 552.262 54.5765 554.292C61.4282 556.335 69.6121 549.151 72.8457 538.263C76.0793 527.375 73.1512 516.891 66.2891 514.853C59.435 512.817 51.2455 519.991 48.0175 530.89Z" fill="white"></path>
+      <path d="M88.8987 438.736C82.0391 436.69 73.8546 443.873 70.6258 454.772C67.3937 465.652 70.321 476.136 77.183 478.174C84.0426 480.221 92.227 473.037 95.4558 462.139C98.6903 451.251 95.755 440.764 88.8987 438.736Z" fill="white"></path>
+      <path d="M150.633 539.911C143.771 537.873 135.589 545.048 132.36 555.946C129.126 566.834 132.053 577.319 138.917 579.349C145.777 581.396 153.953 574.21 157.188 563.322C160.425 552.426 157.495 541.949 150.633 539.911Z" fill="white"></path>
+      <path d="M112.8 467.292C109.564 478.179 112.496 488.667 119.358 490.707C126.211 492.744 134.4 485.555 137.626 474.673C140.863 463.786 137.931 453.299 131.069 451.259C124.216 449.221 116.029 456.402 112.8 467.292Z" fill="white"></path>
+      <path d="M153.899 374.428C147.039 372.381 138.855 379.565 135.626 390.463C132.391 401.351 135.321 411.827 142.183 413.866C149.043 415.912 157.227 408.729 160.456 397.83C163.69 386.942 160.755 376.456 153.899 374.428Z" fill="white"></path>
+      <path d="M136.476 742.025C143.336 744.071 151.52 736.888 154.749 725.989C157.984 715.101 155.054 704.625 148.192 702.586C141.332 700.54 133.148 707.723 129.919 718.622C126.685 729.51 129.62 739.997 136.476 742.025Z" fill="white"></path>
+      <path d="M176.951 651.263C180.185 640.374 177.257 629.89 170.392 627.86C163.541 625.817 155.357 633.001 152.123 643.889C148.889 654.778 151.818 665.262 158.68 667.3C165.534 669.335 173.723 662.161 176.951 651.263Z" fill="white"></path>
+      <path d="M178.648 754.558C185.508 756.604 193.692 749.421 196.921 738.522C200.156 727.634 197.22 717.148 190.364 715.12C183.504 713.073 175.32 720.257 172.091 731.155C168.857 742.043 171.786 752.519 178.648 754.558Z" fill="white"></path>
+      <path d="M219.123 663.79C222.357 652.902 219.418 642.423 212.567 640.38C205.702 638.35 197.521 645.526 194.287 656.414C191.053 667.303 193.989 677.789 200.844 679.825C207.708 681.854 215.89 674.678 219.123 663.79Z" fill="white"></path>
+      <path d="M74.3357 642.24C81.1953 644.287 89.3798 637.103 92.6086 626.205C95.8406 615.325 92.9133 604.841 86.0514 602.802C79.1918 600.756 71.0074 607.939 67.7785 618.838C64.5441 629.726 67.4794 640.212 74.3357 642.24Z" fill="white"></path>
+      <path d="M94.3045 729.507C101.166 731.545 109.348 724.37 112.577 713.472C115.812 702.584 112.884 692.099 106.02 690.069C99.1605 688.022 90.9841 695.208 87.7496 706.096C84.5128 716.992 87.4425 727.469 94.3045 729.507Z" fill="white"></path>
+      <path d="M134.779 638.73C138.013 627.841 135.085 617.357 128.22 615.327C121.369 613.284 113.185 620.468 109.951 631.356C106.718 642.244 109.646 652.728 116.508 654.766C123.362 656.802 131.551 649.628 134.779 638.73Z" fill="white"></path>
+      <path d="M304.299 440.564C301.065 451.453 304.004 461.931 310.855 463.975C317.72 466.005 325.901 458.829 329.135 447.94C332.369 437.052 329.432 426.565 322.578 424.53C315.714 422.5 307.532 429.676 304.299 440.564Z" fill="white"></path>
+      <path d="M154.971 479.823C151.737 490.711 154.667 501.188 161.53 503.226C168.381 505.269 176.565 498.085 179.799 487.197C183.032 476.308 180.104 465.824 173.242 463.786C166.388 461.751 158.199 468.925 154.971 479.823Z" fill="white"></path>
+      <path d="M299.75 501.369C292.891 499.323 284.706 506.506 281.477 517.404C278.243 528.292 281.178 538.779 288.035 540.807C294.894 542.854 303.079 535.67 306.307 524.772C309.542 513.884 306.612 503.407 299.75 501.369Z" fill="white"></path>
+      <path d="M353.031 476.499C359.891 478.546 368.067 471.36 371.304 460.464C374.536 449.584 371.609 439.099 364.747 437.061C357.885 435.022 349.703 442.198 346.474 453.096C343.239 463.984 346.167 474.469 353.031 476.499Z" fill="white"></path>
+      <path d="M376.07 398.941C382.93 400.987 391.114 393.804 394.343 382.905C397.577 372.017 394.648 361.541 387.786 359.502C380.926 357.456 372.742 364.639 369.513 375.538C366.278 386.426 369.208 396.902 376.07 398.941Z" fill="white"></path>
+      <path d="M345.617 346.977C338.758 344.931 330.573 352.114 327.345 363.013C324.11 373.901 327.045 384.388 333.902 386.416C340.761 388.462 348.946 381.279 352.175 370.38C355.409 359.492 352.479 349.016 345.617 346.977Z" fill="white"></path>
+      <path d="M303.446 334.45C296.586 332.404 288.401 339.587 285.173 350.485C281.941 361.366 284.868 371.85 291.73 373.888C298.589 375.935 306.774 368.751 310.003 357.853C313.237 346.965 310.302 336.478 303.446 334.45Z" fill="white"></path>
+      <path d="M241.529 588.363C244.763 577.475 241.835 566.991 234.97 564.961C228.119 562.917 219.935 570.102 216.701 580.99C213.468 591.878 216.396 602.362 223.258 604.4C230.112 606.436 238.301 599.262 241.529 588.363Z" fill="white"></path>
+      <path d="M262.135 428.048C258.901 438.936 261.832 449.412 268.694 451.45C275.545 453.494 283.729 446.31 286.963 435.421C290.199 424.525 287.268 414.049 280.406 412.011C273.552 409.975 265.363 417.149 262.135 428.048Z" fill="white"></path>
+      <path d="M192.797 552.436C185.937 550.39 177.753 557.573 174.524 568.472C171.29 579.36 174.225 589.847 181.081 591.875C187.941 593.921 196.125 586.738 199.354 575.839C202.589 564.951 199.659 554.475 192.797 552.436Z" fill="white"></path>
+      <path d="M219.963 415.515C216.729 426.403 219.657 436.887 226.522 438.917C233.374 440.96 241.557 433.776 244.791 422.888C248.025 412 245.097 401.516 238.234 399.478C231.38 397.442 223.191 404.616 219.963 415.515Z" fill="white"></path>
+      <path d="M197.142 492.348C193.909 503.236 196.839 513.712 203.701 515.75C210.553 517.793 218.737 510.609 221.971 499.721C225.207 488.825 222.271 478.338 215.414 476.311C208.56 474.275 200.37 481.449 197.142 492.348Z" fill="white"></path>
+      <path d="M261.274 321.922C254.414 319.875 246.23 327.059 243.001 337.957C239.766 348.845 242.702 359.332 249.558 361.36C256.418 363.406 264.602 356.223 267.831 345.325C271.065 334.436 268.136 323.96 261.274 321.922Z" fill="white"></path>
+      <path d="M257.578 488.844C250.719 486.797 242.542 493.983 239.305 504.879C236.073 515.759 239.001 526.243 245.863 528.282C252.725 530.32 260.907 523.145 264.136 512.246C267.37 501.358 264.443 490.874 257.578 488.844Z" fill="white"></path>
+      <path d="M196.063 386.961C189.203 384.914 181.027 392.1 177.79 402.996C174.558 413.876 177.485 424.361 184.347 426.399C191.209 428.437 199.391 421.262 202.62 410.364C205.854 399.476 202.927 388.991 196.063 386.961Z" fill="white"></path>
+      <path d="M165.219 336.307C172.08 338.345 180.263 331.17 183.491 320.271C186.726 309.383 183.799 298.899 176.934 296.869C170.075 294.822 161.898 302.008 158.661 312.904C155.427 323.792 158.357 334.268 165.219 336.307Z" fill="white"></path>
+      <path d="M188.476 258.007C195.338 260.045 203.52 252.87 206.749 241.972C209.984 231.084 207.056 220.599 200.192 218.569C193.332 216.522 185.156 223.708 181.919 234.604C178.685 245.492 181.614 255.969 188.476 258.007Z" fill="white"></path>
+      <path d="M272.82 283.06C279.68 285.106 287.864 277.923 291.093 267.024C294.327 256.136 291.398 245.66 284.536 243.621C277.676 241.575 269.492 248.758 266.263 259.657C263.028 270.545 265.958 281.021 272.82 283.06Z" fill="white"></path>
+      <path d="M123.054 323.778C129.914 325.824 138.099 318.641 141.327 307.742C144.562 296.854 141.632 286.378 134.77 284.339C127.911 282.293 119.726 289.476 116.497 300.375C113.263 311.263 116.193 321.739 123.054 323.778Z" fill="white"></path>
+      <path d="M254.133 191.479C260.995 193.517 269.177 186.342 272.405 175.443C275.64 164.555 272.713 154.071 265.848 152.04C258.989 149.994 250.812 157.18 247.575 168.076C244.341 178.964 247.271 189.44 254.133 191.479Z" fill="white"></path>
+      <path d="M207.39 348.832C214.25 350.879 222.426 343.693 225.663 332.797C228.895 321.917 225.968 311.432 219.106 309.394C212.244 307.355 204.062 314.531 200.833 325.429C197.599 336.317 200.526 346.802 207.39 348.832Z" fill="white"></path>
+      <path d="M230.648 270.53C237.508 272.577 245.692 265.393 248.921 254.495C252.156 243.607 249.226 233.131 242.364 231.092C235.504 229.046 227.32 236.229 224.091 247.128C220.857 258.016 223.792 268.502 230.648 270.53Z" fill="white"></path>
+      <path d="M146.312 245.478C153.172 247.524 161.356 240.341 164.585 229.442C167.82 218.554 164.884 208.068 158.028 206.039C151.168 203.993 142.984 211.176 139.755 222.075C136.521 232.963 139.45 243.439 146.312 245.478Z" fill="white"></path>
+      <path d="M100.008 401.341C106.867 403.387 115.052 396.204 118.28 385.306C121.513 374.425 118.585 363.941 111.723 361.903C104.864 359.856 96.6792 367.04 93.4504 377.938C90.216 388.826 93.1513 399.313 100.008 401.341Z" fill="white"></path>
+      <path d="M24.125 502.328C17.2655 500.281 9.08102 507.465 5.85219 518.363C2.61775 529.251 5.55304 539.738 12.4094 541.766C19.269 543.812 27.4534 536.629 30.6879 525.741C33.9167 514.842 30.987 504.366 24.125 502.328Z" fill="white"></path>
+      <path d="M43.883 590.269C37.0211 588.231 28.839 595.406 25.6102 606.305C22.3757 617.193 25.303 627.677 32.1674 629.708C39.027 631.754 47.2034 624.568 50.4379 613.68C53.6747 602.784 50.745 592.308 43.883 590.269Z" fill="white"></path>
+      <path d="M35.0154 465.641C41.875 467.687 50.0594 460.504 53.2883 449.605C56.5227 438.717 53.593 428.241 46.7311 426.203C39.8715 424.156 31.687 431.34 28.4582 442.238C25.2238 453.126 28.1591 463.613 35.0154 465.641Z" fill="white"></path>
+      <path d="M80.8826 311.249C87.7422 313.296 95.9266 306.112 99.1555 295.214C102.388 284.334 99.4602 273.849 92.5983 271.811C85.7387 269.764 77.5542 276.948 74.3254 287.846C71.091 298.734 74.0263 309.221 80.8826 311.249Z" fill="white"></path>
+      <path d="M57.8357 388.816C64.6977 390.854 72.8797 383.679 76.1086 372.78C79.343 361.892 76.4157 351.408 69.5514 349.377C62.6918 347.331 54.5153 354.517 51.2809 365.405C48.0441 376.301 50.9738 386.777 57.8357 388.816Z" fill="white"></path>
+      <path d="M413.467 472.996C416.7 462.108 413.77 451.632 406.908 449.594C400.056 447.55 391.872 454.734 388.639 465.623C385.403 476.519 388.333 486.995 395.195 489.033C402.049 491.069 410.239 483.895 413.467 472.996Z" fill="white"></path>
+      <path d="M390.645 549.832C393.882 538.945 390.949 528.457 384.087 526.417C377.234 524.38 369.045 531.569 365.819 542.451C362.582 553.338 365.515 563.825 372.376 565.866C379.23 567.903 387.416 560.722 390.645 549.832Z" fill="white"></path>
+      <path d="M349.758 641.983C356.617 644.029 364.802 636.846 368.03 625.947C371.265 615.059 368.33 604.572 361.473 602.544C354.614 600.498 346.429 607.681 343.2 618.58C339.966 629.468 342.896 639.944 349.758 641.983Z" fill="white"></path>
+      <path d="M325.865 613.421C329.099 602.533 326.168 592.057 319.306 590.019C312.455 587.975 304.271 595.159 301.037 606.047C297.801 616.944 300.737 627.43 307.594 629.458C314.448 631.493 322.637 624.32 325.865 613.421Z" fill="white"></path>
+      <path d="M348.475 537.297C351.708 526.409 348.78 515.925 341.916 513.895C335.064 511.851 326.88 519.035 323.646 529.923C320.41 540.82 323.341 551.296 330.203 553.334C337.057 555.369 345.247 548.196 348.475 537.297Z" fill="white"></path>
+      <path d="M296.304 204.007C303.166 206.045 311.348 198.87 314.577 187.972C317.812 177.084 314.884 166.599 308.02 164.569C301.161 162.522 292.984 169.708 289.75 180.596C286.513 191.492 289.443 201.969 296.304 204.007Z" fill="white"></path>
+      <path d="M283.692 600.898C286.929 590.011 283.996 579.524 277.134 577.484C270.281 575.446 262.092 582.635 258.866 593.517C255.629 604.405 258.562 614.892 265.423 616.932C272.277 618.97 280.463 611.788 283.692 600.898Z" fill="white"></path>
+      <path d="M285.179 704.874C292.041 706.913 300.223 699.737 303.452 688.839C306.687 677.951 303.759 667.466 296.895 665.436C290.036 663.389 281.859 670.575 278.622 681.471C275.388 692.359 278.318 702.836 285.179 704.874Z" fill="white"></path>
+      <path d="M338.476 216.53C345.336 218.577 353.52 211.393 356.749 200.495C359.984 189.607 357.054 179.131 350.192 177.092C343.332 175.046 335.148 182.229 331.919 193.128C328.685 204.016 331.62 214.502 338.476 216.53Z" fill="white"></path>
+      <path d="M314.992 295.588C321.854 297.627 330.036 290.451 333.265 279.553C336.499 268.665 333.572 258.18 326.708 256.15C319.848 254.103 311.672 261.289 308.435 272.185C305.2 283.073 308.13 293.55 314.992 295.588Z" fill="white"></path>
+      <path d="M357.156 308.116C364.018 310.155 372.2 302.979 375.429 292.081C378.663 281.193 375.736 270.709 368.872 268.678C362.012 266.632 353.83 273.807 350.601 284.706C347.364 295.602 350.294 306.078 357.156 308.116Z" fill="white"></path>
+      <path d="M243.015 692.349C249.875 694.395 258.059 687.212 261.288 676.313C264.523 665.425 261.587 654.939 254.731 652.911C247.871 650.864 239.687 658.048 236.458 668.946C233.224 679.834 236.153 690.31 243.015 692.349Z" fill="white"></path>
+      <path d="M411.039 281.204C404.18 279.157 395.995 286.341 392.766 297.239C389.532 308.127 392.462 318.604 399.324 320.642C406.183 322.689 414.368 315.505 417.596 304.607C420.831 293.719 417.901 283.242 411.039 281.204Z" fill="white"></path>
+      <path d="M436.514 395.435C439.747 384.546 436.819 374.062 429.955 372.032C423.103 369.989 414.919 377.173 411.686 388.061C408.452 398.949 411.38 409.434 418.242 411.471C425.096 413.507 433.286 406.333 436.514 395.435Z" fill="white"></path>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- ============ PAGE HEADER ============ -->
+<header class="relative overflow-hidden bg-pm-navy">
+  <div class="absolute -top-6 right-0 w-[46%] h-[130%] dots-blue-lg fade-hero hidden sm:block opacity-70"></div>
+  <div class="absolute inset-0" style="background: linear-gradient(120deg, rgba(6,12,26,0.55) 0%, rgba(6,12,26,0) 60%);"></div>
+
+  <div class="relative z-10 max-w-[1280px] mx-auto px-5 md:px-10 flex flex-col">
+    <!-- NAV -->
+    <nav class="flex items-center justify-between pt-6 md:pt-8" aria-label="Høvuðsvalmynd">
+      <a href="index.html" class="flex-none" aria-label="Padelmiðstøðin — forsíða">
+        <svg viewBox="0 0 2956 1179" class="h-10 md:h-[52px] w-auto text-white"><use href="#pm-logo"/></svg>
+      </a>
+      <!-- desktop links -->
+      <div class="hidden lg:flex items-center gap-8 xl:gap-[34px]">
+        <a href="index.html#kunning" class="text-white text-base hover:text-pm-blue transition-colors">Kunning</a>
+        <a href="index.html#vellir" class="text-white text-base hover:text-pm-blue transition-colors">Vøllir</a>
+        <a href="index.html#state" class="text-white text-base hover:text-pm-blue transition-colors">State Lounge</a>
+        <a href="index.html#samband" class="text-white text-base hover:text-pm-blue transition-colors">Samband</a>
+        <a href="#temp-booking" class="inline-flex items-baseline gap-[0.3em] ml-1.5 text-[15px] tracking-[0.05em] px-[22px] pt-[11px] pb-3 bg-white text-pm-ink rounded-tr-[18px] pm-cta pm-cta-on-dark">
+          <span class="font-semibold">BÓKA</span><span class="text-pm-steel font-bold">HER</span>
+        </a>
+      </div>
+      <!-- mobile burger -->
+      <button id="nav-toggle" type="button" class="lg:hidden inline-flex items-center justify-center w-11 h-11 border-[1.5px] border-white/85 rounded-tr-[14px] text-white" aria-expanded="false" aria-controls="mobile-menu" aria-label="Lat valmynd upp">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="hidden"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
+      </button>
+    </nav>
+
+    <!-- mobile menu — overlay panel, doesn't push the page -->
+    <div id="mobile-menu" class="hidden lg:!hidden absolute left-4 right-4 top-20 z-30 flex-col gap-1 p-3 bg-pm-navy border border-white/10 rounded-2xl rounded-tr-[22px] shadow-[0_28px_60px_rgba(0,0,0,0.45)]">
+      <a href="index.html#kunning" class="text-white text-[17px] py-3 px-4 rounded-lg hover:bg-white/10">Kunning</a>
+      <a href="index.html#vellir" class="text-white text-[17px] py-3 px-4 rounded-lg hover:bg-white/10">Vøllir</a>
+      <a href="index.html#state" class="text-white text-[17px] py-3 px-4 rounded-lg hover:bg-white/10">State Lounge</a>
+      <a href="index.html#samband" class="text-white text-[17px] py-3 px-4 rounded-lg hover:bg-white/10">Samband</a>
+      <a href="#temp-booking" class="inline-flex items-baseline gap-[0.3em] self-start mt-2 mb-1.5 mx-4 text-[15px] tracking-[0.05em] px-[22px] pt-[11px] pb-3 bg-white text-pm-ink rounded-tr-[18px]">
+        <span class="font-semibold">BÓKA</span><span class="text-pm-steel font-bold">HER</span>
+      </a>
+    </div>
+
+    <!-- PAGE TITLE -->
+    <div class="pt-12 pb-10 md:pt-20 md:pb-14">
+      <p class="pm-hero-in text-pm-blue text-[13px] md:text-sm tracking-[0.14em] uppercase mb-3"><a href="index.html" class="hover:text-white transition-colors">Heim</a><span class="mx-2 text-white/40">/</span>Kunning</p>
+      <h1 class="pm-hero-in italic font-bold text-[38px] sm:text-[46px] lg:text-[56px] leading-none text-white" style="animation-delay: .1s;">Kunning</h1>
+    </div>
+  </div>
+</header>
+
+<!-- ============ CONTENT ============ -->
+<!-- PLACEHOLDER COPY throughout this page — generic subpage template, verify all text -->
+<main class="relative bg-white overflow-hidden">
+  <div class="absolute top-10 left-0 w-[280px] h-[240px] dots-blue fade-down-right"></div>
+  <div class="relative max-w-[1280px] mx-auto px-5 md:px-10 py-14 md:py-20">
+    <div class="max-w-[720px]">
+
+      <p class="pm-reveal text-lg md:text-[21px] leading-relaxed font-medium text-pm-ink mb-10 md:mb-12">Her finnur tú praktiska kunning um Padelmiðstøðina — bóking, útgerð, reglur og annað, sum er gott at vita, áðrenn tú kemur.</p>
+
+      <h2 class="pm-reveal font-bold text-[24px] md:text-[28px] tracking-[0.01em] text-pm-ink mb-4">Um Padelmiðstøðina</h2>
+      <p class="pm-reveal text-[17px] leading-relaxed text-pm-slate mb-4">Padelmiðstøðin er størsta padelmiðstøð í Føroyum — fimm vøllir, State Café og State Lounge, alt á einum stað á Hjalla í Hoyvík.</p>
+      <p class="pm-reveal text-[17px] leading-relaxed text-pm-slate mb-10">Endamálið hjá okkum er at geva øllum — bæði byrjarum og royndum spælarum — eina góða uppliving. Tú kanst leiga útgerð á staðnum, og starvsfólkið hjálpir tær fegin í gongd.</p>
+
+      <figure class="pm-reveal my-10 md:my-12">
+        <img src="assets/hero-state-tennis.webp" alt="Padelvøllur í Padelmiðstøðini" class="w-full rounded-2xl rounded-tr-[36px]" loading="lazy" decoding="async">
+        <figcaption class="mt-3 text-sm text-pm-slate">Padelmiðstøðin — Á Hjalla 2, Hoyvík.</figcaption>
+      </figure>
+
+      <h2 class="pm-reveal font-bold text-[24px] md:text-[28px] tracking-[0.01em] text-pm-ink mb-4">Praktisk kunning</h2>
+      <p class="pm-reveal text-[17px] leading-relaxed text-pm-slate mb-5">Nakað av tí, sum er gott at vita, áðrenn tú kemur at spæla:</p>
+      <ul class="pm-reveal space-y-3 text-[17px] leading-relaxed text-pm-slate mb-10 md:mb-12">
+        <li class="flex gap-3"><span class="mt-[9px] w-2 h-2 rounded-full bg-pm-blue flex-none" aria-hidden="true"></span><span><strong class="text-pm-ink font-semibold">Bóking:</strong> Vøllirnir verða bókaðir frammanundan — bóka her á síðuni.</span></li>
+        <li class="flex gap-3"><span class="mt-[9px] w-2 h-2 rounded-full bg-pm-blue flex-none" aria-hidden="true"></span><span><strong class="text-pm-ink font-semibold">Útgerð:</strong> Padel kettjarir og bóltar kunnu leigast í móttøkuni.</span></li>
+        <li class="flex gap-3"><span class="mt-[9px] w-2 h-2 rounded-full bg-pm-blue flex-none" aria-hidden="true"></span><span><strong class="text-pm-ink font-semibold">Skógvar:</strong> Nýt innandura ítróttarskógvar við ljósum sóla.</span></li>
+        <li class="flex gap-3"><span class="mt-[9px] w-2 h-2 rounded-full bg-pm-blue flex-none" aria-hidden="true"></span><span><strong class="text-pm-ink font-semibold">Skiftingarrúm:</strong> Skiftingarrúm við brúsum eru til taks fyri bæði kvinnur og menn.</span></li>
+      </ul>
+
+      <h2 class="pm-reveal font-bold text-[24px] md:text-[28px] tracking-[0.01em] text-pm-ink mb-4">Spurningar?</h2>
+      <p class="pm-reveal text-[17px] leading-relaxed text-pm-slate">Hevur tú spurningar, so set teg í samband við okkum á <a href="mailto:info@padelm.fo" class="text-pm-steel font-medium hover:underline underline-offset-4">info@padelm.fo</a> ella ring til <a href="tel:+298552222" class="text-pm-steel font-medium hover:underline underline-offset-4">55 22 22</a>.</p>
+
+    </div>
+  </div>
+</main>
+
+<!-- ============ CTA BAND ============ -->
+<section class="relative bg-pm-panel overflow-hidden">
+  <div class="absolute bottom-4 right-0 w-[380px] h-[220px] dots-blue fade-up-left"></div>
+  <div class="relative max-w-[1280px] mx-auto px-5 md:px-10 py-12 md:py-16 flex flex-col md:flex-row md:items-center md:justify-between gap-7 md:gap-10">
+    <p class="pm-reveal uppercase text-pm-ink font-medium text-lg md:text-[22px] leading-snug tracking-[0.02em] max-w-[560px]">Klárur at spæla? Bóka ein vøll og kom í gongd.</p>
+    <div class="pm-reveal flex-none" style="--reveal-delay: .1s;">
+      <a href="#temp-booking" class="inline-flex items-baseline gap-[0.4em] bg-pm-blue text-pm-ink text-base md:text-[19px] font-semibold tracking-[0.07em] px-7 md:px-8 py-3.5 md:py-[15px] rounded-tr-[26px] pm-cta">
+        <span>BÓKA</span><span>VØLLIN</span><span class="text-white font-bold">HER</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer id="samband" class="bg-pm-navy text-white">
+  <div class="max-w-[1280px] mx-auto px-5 md:px-10 pt-14 md:pt-[62px] pb-10">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1.25fr_1.6fr_1fr_1fr] gap-10">
+      <div>
+        <a href="index.html" aria-label="Padelmiðstøðin — forsíða">
+          <svg viewBox="0 0 2956 1179" class="h-12 w-auto text-white"><use href="#pm-logo"/></svg>
+        </a>
+        <div class="flex gap-3 mt-6">
+          <a href="#" aria-label="Facebook" class="text-white hover:text-pm-blue transition-colors"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z"/></svg></a>
+          <a href="#" aria-label="Instagram" class="text-white hover:text-pm-blue transition-colors"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg></a>
+        </div>
+      </div>
+      <div>
+        <h4 class="font-bold text-[19px] mb-4">Upplatingartíðir</h4>
+        <p class="text-[15px] leading-[1.75] text-pm-frost">Sunnudag - hósdag: 06.00 - 01.30<br>Fríggjadag - leygardag: 06.00 - 24.00</p>
+      </div>
+      <div>
+        <h4 class="font-bold text-[19px] mb-4">Samband</h4>
+        <a href="https://maps.app.goo.gl/hRV5iu2jbPa3KAJx6" target="_blank" rel="noopener" class="group block text-[15px] leading-[1.75] text-pm-frost hover:text-white transition-colors">
+          Á Hjalla 2<br>188 Hoyvík<br>Tórshavn, Føroyar
+        </a>
+      </div>
+      <div>
+        <h4 class="font-bold text-[19px] mb-4">Teldupostur</h4>
+        <p class="text-[15px] leading-[1.75] text-pm-frost"><a href="mailto:info@padelm.fo" class="hover:text-white transition-colors">info@padelm.fo</a><br>Tel.: <a href="tel:+298552222" class="hover:text-white transition-colors">55 22 22</a></p>
+      </div>
+    </div>
+    <div class="mt-11 pt-6 border-t border-white/10 text-sm text-pm-fog">© 2026 Padelmiðstøðin</div>
+  </div>
+</footer>
+
+<script>
+  const navToggle = document.getElementById('nav-toggle');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const navIcons = navToggle.querySelectorAll('svg');
+  const setMenu = (open) => {
+    mobileMenu.classList.toggle('flex', open);
+    mobileMenu.classList.toggle('hidden', !open);
+    navIcons[0].classList.toggle('hidden', open);
+    navIcons[1].classList.toggle('hidden', !open);
+    navToggle.setAttribute('aria-expanded', String(open));
+  };
+  navToggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    setMenu(mobileMenu.classList.contains('hidden'));
+  });
+  mobileMenu.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => setMenu(false)));
+  document.addEventListener('click', (e) => {
+    if (!mobileMenu.classList.contains('hidden') && !mobileMenu.contains(e.target)) setMenu(false);
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !mobileMenu.classList.contains('hidden')) setMenu(false);
+  });
+
+  // Scroll reveals — add .pm-revealed once when an element enters the viewport
+  (function () {
+    const els = document.querySelectorAll('.pm-reveal');
+    if (!('IntersectionObserver' in window)) {
+      els.forEach((el) => el.classList.add('pm-revealed'));
+      return;
+    }
+    const io = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('pm-revealed');
+          io.unobserve(entry.target);
+        }
+      }
+    }, { rootMargin: '0px 0px -60px 0px' });
+    els.forEach((el) => io.observe(el));
+  })();
+</script>
+</body>
+</html>
